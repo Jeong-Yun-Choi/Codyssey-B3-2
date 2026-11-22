@@ -9,11 +9,19 @@ def mask_sensitive_text(text):
     return re.sub(secret_pattern, r"\1[비밀값 가림]", text)
 
 # 수집한 Git 정보의 텍스트를 가린 새 딕셔너리를 만듭니다.
-def mask_git_info(git_info):
+def mask_git_info(git_info, max_diff_lines=None):
     masked = git_info.copy()  # 원본 딕셔너리 유지
 
     for key in ("status", "diff", "staged_diff"):
         masked[key] = mask_sensitive_text(git_info[key])
+
+    if max_diff_lines is not None:
+        if max_diff_lines < 1:
+            raise ValueError("diff 줄 제한은 1 이상이어야 합니다.")
+        for key in ("diff", "staged_diff"):
+            lines = masked[key].splitlines(keepends=True)
+            if len(lines) > max_diff_lines:
+                masked[key] = "".join(lines[:max_diff_lines]).rstrip("\n") + "\n[나머지 diff 생략]"
 
     masked["untracked_files"] = {
         path: mask_sensitive_text(content)
