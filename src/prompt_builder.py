@@ -16,7 +16,7 @@ def build_prompt(git_info, draft_type, convention=None):
     else:
         raise ValueError("초안 종류는 commit 또는 pr이어야 합니다.")
 
-    if convention == "b3-1-docs":
+    if convention == "docs":
         rules += (
             " 문서 변경을 전제로 제목은 docs: 접두사로 시작하고 "
             "한국어로 변경 내용을 구체적으로 작성하세요."
