@@ -72,7 +72,7 @@ Git 초안 생성기 프로젝트 구조 및 문서 추가
 B3-1 저장소의 문서 커밋에서 확인한 `docs:` 접두사와 한국어 변경 설명을 문서 변경에 적용할 수 있습니다.
 
 ```bash
-python3 src/main.py commit --safe-mode --convention b3-1-docs
+python3 src/main.py commit --safe-mode --convention docs
 ```
 
 같은 가상 README 변경으로 실제 API를 한 번씩 호출해 비교한 결과는 다음과 같습니다.

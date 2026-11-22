@@ -20,7 +20,7 @@ class BonusTests(unittest.TestCase):
 
     def test_convention_changes_only_opt_in_prompt(self):
         normal = build_prompt(self.info, "commit")
-        customized = build_prompt(self.info, "commit", convention="b3-1-docs")
+        customized = build_prompt(self.info, "commit", convention="docs")
         self.assertNotIn("docs:", normal)
         self.assertIn("docs:", customized)
 
@@ -46,7 +46,7 @@ class BonusTests(unittest.TestCase):
 
             self.info["diff"] = '+email="dev@example.com"\n+secret="fake-secret"\n'
             self.info["skipped_files"] = {}
-            args = ["main.py", "commit", "--safe-mode", "--safe-max-diff-lines", "1", "--convention", "b3-1-docs"]
+            args = ["main.py", "commit", "--safe-mode", "--safe-max-diff-lines", "1", "--convention", "docs"]
             with patch.object(sys, "argv", args), \
                  patch.object(main, "collect_git_info", return_value=self.info), \
                  patch("ai_client.get_api_key", return_value="fake-key"), \

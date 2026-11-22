@@ -34,8 +34,8 @@ def parse_arguments():
             help="안전 모드에서 각 diff의 최대 전송 줄 수"
         )
         command_parser.add_argument(
-            "--convention", choices=["b3-1-docs"], default=None,
-            help="문서 변경용 B3-1 커밋 스타일 적용"
+            "--convention", choices=["docs"], default=None,
+            help="문서 변경용 커밋 스타일 적용"
         )
 
     args = parser.parse_args()
