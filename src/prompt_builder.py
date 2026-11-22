@@ -1,4 +1,4 @@
-def build_prompt(git_info, draft_type):
+def build_prompt(git_info, draft_type, convention=None):
     # Git 수집 결과와 출력 규칙을 합쳐 AI 요청용 프롬프트를 만듭니다.
     if draft_type == "commit":
          rules = (
@@ -15,6 +15,14 @@ def build_prompt(git_info, draft_type):
         )
     else:
         raise ValueError("초안 종류는 commit 또는 pr이어야 합니다.")
+
+    if convention == "b3-1-docs":
+        rules += (
+            " 문서 변경을 전제로 제목은 docs: 접두사로 시작하고 "
+            "한국어로 변경 내용을 구체적으로 작성하세요."
+        )
+    elif convention is not None:
+        raise ValueError("지원하지 않는 컨벤션입니다.")
 
     # 새 파일 본문을 제한해 프롬프트 입력 토큰을 줄입니다.
     max_file_chars = 1_200
@@ -33,7 +41,7 @@ def build_prompt(git_info, draft_type):
         if len(content) > limit:
             excerpt += "\n[본문 일부 생략]"
         new_file_parts.append(f"파일: {path}\n{excerpt}")
-        total_chars += limit
+        total_chars += len(content[:limit])
 
     new_files = "\n\n".join(new_file_parts)
 

@@ -29,8 +29,22 @@ def parse_arguments():
             "--safe-mode", action="store_true",
             help="민감정보 패턴 마스킹 사용"
         )
+        command_parser.add_argument(
+            "--safe-max-diff-lines", type=int, default=None, metavar="줄수",
+            help="안전 모드에서 각 diff의 최대 전송 줄 수"
+        )
+        command_parser.add_argument(
+            "--convention", choices=["b3-1-docs"], default=None,
+            help="문서 변경용 B3-1 커밋 스타일 적용"
+        )
 
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.safe_max_diff_lines is not None:
+        if not args.safe_mode:
+            parser.error("--safe-max-diff-lines에는 --safe-mode가 필요합니다.")
+        if args.safe_max_diff_lines < 1:
+            parser.error("--safe-max-diff-lines는 1 이상이어야 합니다.")
+    return args
 
 # Git 변경 내용을 수집하고 AI가 생성한 초안을 출력합니다.
 def main():
@@ -53,9 +67,9 @@ def main():
         return
     
     if args.safe_mode:
-        git_info = mask_git_info(git_info)  # 상태, diff와 새 파일 본문 마스킹
+        git_info = mask_git_info(git_info, args.safe_max_diff_lines)  # 마스킹 및 선택적 diff 줄 제한
 
-    prompt = build_prompt(git_info, args.command)  # 초안 종류에 맞는 프롬프트 구성
+    prompt = build_prompt(git_info, args.command, args.convention)  # 초안 종류와 컨벤션 적용
 
     if args.safe_mode:
         prompt = mask_sensitive_text(prompt)  # 파일 경로 등에 남은 이메일 마스킹
